@@ -2,7 +2,6 @@
 import express from 'express'
 import cors from 'cors'
 
-import { connectOracleDB } from './infra/db/oracle'
 import { globalErrorHandler } from './middlewares/global-error-handler'
 import { Controller } from './core/controller'
 
@@ -11,21 +10,21 @@ export class App {
 
   constructor(controllers: Controller[]) {
     this.app = express()
-    this.initializeMiddlewares()
-    this.initializeControllers(controllers)
-    this.initializeErrorHandler()
+    this.initMiddlewares()
+    this.initControllers(controllers)
+    this.initErrorHandler()
   }
 
-  private initializeControllers(controllers: Controller[]) {
+  private initControllers(controllers: Controller[]) {
     controllers.forEach(({ router }) => this.app.use('/api', router))
   }
 
-  private initializeMiddlewares() {
+  private initMiddlewares() {
     this.app.use(cors())
     this.app.use(express.json())
   }
 
-  private initializeErrorHandler() {
+  private initErrorHandler() {
     this.app.use(globalErrorHandler)
   }
 

@@ -3,12 +3,14 @@ import { cleanEnv, str, port } from 'envalid';
 
 import { App } from './app';
 
-import { UtenteController } from './modulos/utente-controller';
-import { ViaturaController } from './modulos/viatura-controller';
-import { BoleiaController } from './modulos/boleia-controller'
-import { InscricaoController } from './modulos/inscricao-controller';
-import { LocalController } from './modulos/local-controller';
-import { TransacaoController } from './modulos/transacao-controller';
+import {
+  UtenteController,
+  BoleiaController,
+  LocalController,
+  InscricaoController,
+  TransacaoController,
+  ViaturaController
+} from './modules';
 
 dotenv.config()
 cleanEnv(process.env, {
