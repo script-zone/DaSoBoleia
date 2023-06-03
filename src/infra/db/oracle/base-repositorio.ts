@@ -83,7 +83,7 @@ export class BaseRepository<T extends {} = any> {
     }
   }
 
-  public async findOne(filters: Record<string, any> = {}): Promise<T | null> {
+  public async findOne(filters: Record<string, any>): Promise<T | null> {
     try {
       const filterConditions = Object.entries(filters).map(([key, _value]) => `${key} = :${key}`);
       const filterParams = Object.fromEntries(Object.entries(filters).map(([key, value]) => [key, value]));
