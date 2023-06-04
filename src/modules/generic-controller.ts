@@ -4,7 +4,7 @@ import { BaseRepository } from "../infra/db/oracle/base-repositorio";
 import { Controller } from "../core/controller";
 import { BadRequestError, NotFoundError } from "../middlewares/global-error-handler";
 
-function ok(response: Response, data: any) {
+export function ok(response: Response, data: any) {
   return response.status(200).json(data);
 }
 
@@ -12,13 +12,15 @@ export abstract class GenericController implements Controller {
   protected abstract repository: BaseRepository;
   public abstract path: string;
   public router = Router();
-  protected placeholder = ':id'
+  protected placeholder = ':codigo'
 
   protected all = async (_request: Request, response: Response) => {
     const records = await this.repository.getAll();
     if (records?.length) throw new NotFoundError('Ainda não existem registros!')
     return ok(response, records);
   }
+
+
 
   protected findById = async (request: Request, response: Response) => {
     const record = await this.repository.findOne(request.params);
@@ -43,7 +45,7 @@ export abstract class GenericController implements Controller {
     return ok(response, newRecord);
   }
 
-  protected initializeGenericRoutes(placeholderId = ':id') {
+  protected initializeGenericRoutes(placeholderId = ':codigo') {
     this.router.get(`${this.path}`, this.all)
     this.router.get(`${this.path}/${placeholderId}`, this.findById)
     this.router.delete(`${this.path}/${placeholderId}`, this.remove)

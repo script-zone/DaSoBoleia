@@ -1,49 +1,54 @@
-import oracledb from 'oracledb';
+import oracledb, { Connection } from 'oracledb';
 import { connectOracleDB } from '.';
 
 export class BaseRepository<T extends {} = any> {
   protected table: string;
-  private connection: oracledb.Connection | undefined;
+  private connection: Connection | undefined;
 
   constructor(table: string) {
     this.table = table;
   }
 
-  public async getConnection(): Promise<oracledb.Connection> {
-    if (!this.connection) {
-      this.connection = await connectOracleDB();
-    }
-    return this.connection;
+  public async getConnection(): Promise<Connection> {
+    return connectOracleDB();
   }
-
-  async connect() {
-    try {
-      if (!this.connection) {
-        this.connection = await connectOracleDB();
-      }
-    } catch (error) {
-      console.error('Erro ao conectar ao banco de dados:', error);
-      throw error;
-    }
+/*
+  async connect(conn: Connection | undefined) {
+      
+    this.connection = await this.getConnection();
+      
   }
 
   async disconnect() {
-    try {
-      if (this.connection) {
-        await this.connection.close();
-        this.connection = undefined;
-      }
-    } catch (error) {
-      console.error('Erro ao desconectar do banco de dados:', error);
-      throw error;
+    this.connection = undefined;
+  }
+*/
+  public async execute(sql: string, bindParams: any[] = []) {
+  
+    let resultado: any;
+    try{
+      this.connection = await this.getConnection()
+    resultado = await this.connection.execute(sql,bindParams);
+    this.connection.close();
+    }catch(err){
+      console.error(err)
+    }finally{
+      return resultado;
     }
   }
 
   private checkAndReturn(result: any): T[] | null {
-    if (result?.rows && result?.rows instanceof Array) {
-      return result.rows.length ? result.rows : null;
-    }
+    if (result?.rows || result?.rows instanceof Array) 
+      return result.rows.length==1 ?
+        result.rows[0] : result.rows;
+    
     return null;
+  }
+
+  public async getAluno(): Promise<any | null>  {
+    
+      const resultado = await this.execute(`select * from aluno`);
+      return this.checkAndReturn(resultado);
   }
 
   async create(data: T): Promise<T | null> {
