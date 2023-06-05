@@ -12,7 +12,7 @@ export class BaseRepository<T extends {} = any> {
   public async getConnection(): Promise<Connection> {
     return connectOracleDB();
   }
-/*
+  /*
   async connect(conn: Connection | undefined) {
       
     this.connection = await this.getConnection();
@@ -22,7 +22,7 @@ export class BaseRepository<T extends {} = any> {
   async disconnect() {
     this.connection = undefined;
   }
-*/
+  */
   public async execute(sql: string, bindParams: any[] = []) {
   
     let resultado: any;
@@ -37,18 +37,12 @@ export class BaseRepository<T extends {} = any> {
     }
   }
 
-  private checkAndReturn(result: any): T[] | null {
+  protected checkAndReturn(result: any): T[] | null {
     if (result?.rows || result?.rows instanceof Array) 
       return result.rows.length==1 ?
         result.rows[0] : result.rows;
     
     return null;
-  }
-
-  public async getAluno(): Promise<any | null>  {
-    
-      const resultado = await this.execute(`select * from aluno`);
-      return this.checkAndReturn(resultado);
   }
 
   async create(data: T): Promise<T | null> {

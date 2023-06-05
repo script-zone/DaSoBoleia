@@ -4,27 +4,25 @@ import { BaseRepository } from "../infra/db/oracle/base-repositorio";
 import { Controller } from "../core/controller";
 import { BadRequestError, NotFoundError } from "../middlewares/global-error-handler";
 
-export function ok(response: Response, data: any) {
-  return response.status(200).json(data);
-}
-
 export abstract class GenericController implements Controller {
   protected abstract repository: BaseRepository;
   public abstract path: string;
   public router = Router();
   protected placeholder = ':codigo'
 
+  protected ok(response: Response, data: any) {
+    return response.status(200).json(data);
+  }
+
   protected all = async (_request: Request, response: Response) => {
     const records = await this.repository.getAll();
     if (records?.length) throw new NotFoundError('Ainda não existem registros!')
-    return ok(response, records);
+    return this.ok(response, records);
   }
-
-
 
   protected findById = async (request: Request, response: Response) => {
     const record = await this.repository.findOne(request.params);
-    if (record) return ok(response, record)
+    if (record) return this.ok(response, record)
     throw new NotFoundError('Não foi possivel encontrar esse registro!')
   }
 
@@ -36,13 +34,13 @@ export abstract class GenericController implements Controller {
   protected add = async (request: Request, response: Response) => {
     if (!request.body) throw new BadRequestError ('Não foram passados parâmetros!');
     const newRecord = await this.repository.create(request.body);
-    return ok(response, newRecord);
+    return this.ok(response, newRecord);
   }
 
   protected update = async (request: Request, response: Response) => {
     if (!request.body) throw new BadRequestError('Não foram passados parâmetros!');
     const newRecord = await this.repository.updateById(request.params[this.placeholder], request.body)
-    return ok(response, newRecord);
+    return this.ok(response, newRecord);
   }
 
   protected initializeGenericRoutes(placeholderId = ':codigo') {
