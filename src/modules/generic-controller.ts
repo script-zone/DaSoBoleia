@@ -15,8 +15,9 @@ export abstract class GenericController implements Controller {
   }
 
   protected all = async (_request: Request, response: Response) => {
-    const records = await this.repository.getAll();
-    if (records?.length) throw new NotFoundError('Ainda não existem registros!')
+    const { filters } = _request.body
+    const records = await this.repository.getAll(filters);
+    if (!records?.length) throw new NotFoundError('Ainda não existem registros!')
     return this.ok(response, records);
   }
 
@@ -27,7 +28,8 @@ export abstract class GenericController implements Controller {
   }
 
   protected remove = async (request: Request, response: Response) => {
-    const deleted = await this.repository.removeById(request.params[this.placeholder]);
+    const { codigo } = request.params
+    const deleted = await this.repository.removeById(codigo);
     return response.sendStatus(deleted ? 204 : 404);
   }
 
@@ -39,14 +41,16 @@ export abstract class GenericController implements Controller {
 
   protected update = async (request: Request, response: Response) => {
     if (!request.body) throw new BadRequestError('Não foram passados parâmetros!');
-    const newRecord = await this.repository.updateById(request.params[this.placeholder], request.body)
+    const { codigo } = request.params
+    const newRecord = await this.repository.updateById(codigo, request.body)
     return this.ok(response, newRecord);
   }
 
-  protected initializeGenericRoutes(placeholderId = ':codigo') {
+  protected initializeGenericRoutes(placeholderCodigo = `:codigo`) {
     this.router.get(`${this.path}`, this.all)
-    this.router.get(`${this.path}/${placeholderId}`, this.findById)
-    this.router.delete(`${this.path}/${placeholderId}`, this.remove)
+    this.router.get(`${this.path}/${placeholderCodigo}`, this.findById)
+    this.router.delete(`${this.path}/${placeholderCodigo}`, this.remove)
+    this.router.put(`${this.path}/${placeholderCodigo}`, this.update)
     this.router.post(`${this.path}`, this.add)
   }
 }

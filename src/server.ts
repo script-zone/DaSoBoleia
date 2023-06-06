@@ -9,6 +9,7 @@ import { BoleiaController } from './modules/boleia-controller'
 import { InscricaoController } from './modules/inscricao-controller';
 import { LocalController } from './modules/local-controller';
 import { TransacaoController } from './modules/transacao-controller';
+import { AlunoController } from './modules/aluno-controller';
 
 dotenv.config()
 cleanEnv(process.env, {
@@ -25,6 +26,7 @@ const app = new App([
   new InscricaoController(),
   new LocalController(),
   new TransacaoController(),
+  new AlunoController(),
 ])
 
 app.run()

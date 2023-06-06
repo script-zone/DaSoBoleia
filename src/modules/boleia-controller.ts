@@ -1,9 +1,9 @@
-import { BaseRepository } from "../infra/db/oracle/base-repositorio";
+import { BoleiaRepositorio } from "../infra/db/boleia-repositorio";
 import { GenericController } from "./generic-controller";
 
 export class BoleiaController extends GenericController {
   public path = '/boleia'
-  protected repository = new BaseRepository('boleia')
+  protected repository = new BoleiaRepositorio()
 
   constructor() {
     super();
@@ -11,6 +11,6 @@ export class BoleiaController extends GenericController {
   }
 
   public initializeRoutes() {
-    this.initializeGenericRoutes(':id')
+    this.initializeGenericRoutes()
   }
 }

@@ -11,10 +11,4 @@ export class AlunoRepositorio extends BaseRepository<Props>{
     super('aluno');
   }
 
-  public async getAluno(): Promise<any | null>  {
-    
-      const resultado = await this.execute(`select * from ${this.table}`);
-      return this.checkAndReturn(resultado);
-  }
-
 }
