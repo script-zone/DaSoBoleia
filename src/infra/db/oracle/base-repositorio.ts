@@ -4,7 +4,6 @@ import { connectOracleDB } from '.';
 export abstract class BaseRepository<T extends {} = any> {
   protected table: string;
   private connection: Connection | undefined;
-  protected oracle = connectOracleDB
 
   constructor(table: string) {
     this.table = table;
@@ -17,19 +16,23 @@ export abstract class BaseRepository<T extends {} = any> {
     return undefined;
   }
 
-  protected checkAndReturn(result: any): T[] | null {
-    if (result?.rows || result?.rows instanceof Array) 
+  protected checkAndReturn(result: any): T[] | any | null {
+    if (result.rows || result.rows instanceof Array) 
       return result.rows
+    if (result.length)
+      return result
     return null;
   }
 
   public async execute(sql: string,bindParams:{}={}) {
 
-    let resultado: any;
     try{
+      console.log(888)
       this.connection = await this.connect()
-      resultado = await this.connection.execute(sql,bindParams);
-      this.connection.commit()
+      const resultado = await this.connection.execute(sql,bindParams);
+      console.log(bindParams)
+      console.log(resultado?.outBinds)
+    this.connection.commit()
       this.connection = this.disconnect()
       return resultado;
     }catch(err){
