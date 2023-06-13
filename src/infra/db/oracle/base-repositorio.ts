@@ -83,8 +83,8 @@ export abstract class BaseRepository<T extends {} = any> {
 
       const query = `
         SELECT *
-        FROM ${this.table}
-        ${filterConditions.length ? 'WHERE ' + filterConditions.join(' AND ') : ''}
+        FROM ${this.table} ${filterConditions.length ?
+          'WHERE ' + filterConditions.join(' AND ') : ''}
       `;
     //`OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY`
     //const query2 = `select * from ${this.table}`;
