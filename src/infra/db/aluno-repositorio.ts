@@ -6,9 +6,7 @@ interface Props {
 }
 
 export class AlunoRepositorio extends BaseRepository<Props>{
-  
   constructor(){
     super('aluno');
   }
-
 }

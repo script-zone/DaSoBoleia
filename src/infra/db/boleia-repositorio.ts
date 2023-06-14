@@ -12,36 +12,52 @@ interface Props {
   estado: String;
   codigo_utente: Number;
 }
+type BoleiaParams = {
+  codigo: number;
+  custo: number;
+  data_hora: string;
+  tipo: string;
+  origem: number;
+  destino: number;
+  t_freq: string;
+  termino: string;
+};
 
-export class BoleiaRepositorio extends BaseRepository<Props>{
-  
-  constructor(){
-    super('boleia');
+export class BoleiaRepositorio extends BaseRepository<Props> {
+  constructor() {
+    super("boleia");
   }
 
-
-  public async criarBoleia(data: any): Promise<any>{
-    try{
+  public async criarBoleia(boleia: BoleiaParams): Promise<any> {
+    try {
       const conexao = await this.connect();
-      const result = await conexao.execute(`
+      const BoleiaParams = [
+        boleia.codigo,
+        boleia.custo.toPrecision(9.2),
+        boleia.data_hora,
+        boleia.tipo,
+        boleia.origem,
+        boleia.destino,
+        boleia.t_freq,
+        boleia.termino,
+      ].join(",")
+      const result = await conexao.execute(
+        `
         Begin
           :confirm := pck_utente.organizar_boleia(
-          ${Number(data.codigo).toString()}, ${Number(data.custo).toPrecision(9.2)}, ${data.data_hora},
-          ${data.tipo}, ${Number(data.origem).toString()}, ${Number(data.destino).toString()},
-          ${data.t_freq}, ${data.termino});
+          ${BoleiaParams});
         End;
-        `,{
-          confirm: {type: OracleDB.DB_TYPE_NUMBER, dir: OracleDB.BIND_OUT }
+        `,
+        {
+          confirm: { type: OracleDB.DB_TYPE_NUMBER, dir: OracleDB.BIND_OUT },
         }
       );
       const resultSet = Object(result.outBinds);
       return this.checkAndReturn([resultSet]);
-    }catch(erro){
-      console.error( erro)
-      throw erro
+    } catch (erro) {
+      throw erro;
+    } finally {
+      this.disconnect();
     }
   }
-
-  
-
 }

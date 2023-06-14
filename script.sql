@@ -233,14 +233,10 @@ end;
 CREATE SEQUENCE INCREMENT_viatura
     INCREMENT BY 1
     START WITH 1
-    NOMAXVALUE
-;
+    NOMAXVALUE;
 
 create or replace trigger increment_viatura before insert on viatura
 for each row
 begin
     select AUTO_INCREMENT_VIATURA.nextval into :new.codigo from dual;
 end;
-
-
-
