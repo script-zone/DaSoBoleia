@@ -1,8 +1,8 @@
 import { GenericController } from "./generic-controller";
-import { BaseRepository } from "../infra/db/oracle/base-repositorio";
+import { ViaturaRepositorio } from "../infra/db/viatura-repositorio";
 
 export class ViaturaController extends GenericController {
-  protected repository = new BaseRepository('viatura')
+  protected repository = new ViaturaRepositorio()
   public path = '/viatura'
     
   constructor() {
