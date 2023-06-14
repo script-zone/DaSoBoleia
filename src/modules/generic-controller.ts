@@ -4,7 +4,7 @@ import { BaseRepository } from "../infra/db/oracle/base-repositorio";
 import { Controller } from "../core/controller";
 import { BadRequestError, NotFoundError } from "../middlewares/global-error-handler";
 
-function ok(response: Response, data: any) {
+export function ok(response: Response, data: any) {
   return response.status(200).json(data);
 }
 
