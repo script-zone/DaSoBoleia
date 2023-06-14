@@ -16,6 +16,7 @@ cleanEnv(process.env, {
   ORACLE_PASSWORD: str(),
   ORACLE_HOST: str(),
   ORACLE_USER: str(),
+  JWT_SECRET: str(),
   PORT: port(),
 });
 
