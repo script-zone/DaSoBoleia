@@ -4,6 +4,10 @@ import { BaseRepository } from "../infra/db/oracle/base-repositorio";
 import { Controller } from "../core/controller";
 import { BadRequestError, NotFoundError } from "../middlewares/global-error-handler";
 
+export const ok = (response: Response, data: any) => {
+  response.status(200).json(data)
+}
+
 export abstract class GenericController implements Controller {
   protected abstract repository: BaseRepository;
   public abstract path: string;

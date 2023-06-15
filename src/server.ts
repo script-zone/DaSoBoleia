@@ -10,6 +10,7 @@ import { InscricaoController } from './modules/inscricao-controller';
 import { LocalController } from './modules/local-controller';
 import { TransacaoController } from './modules/transacao-controller';
 import { AlunoController } from './modules/aluno-controller';
+import { AuthController } from './modules/auth-controller';
 
 dotenv.config()
 cleanEnv(process.env, {
@@ -28,6 +29,7 @@ const app = new App([
   new LocalController(),
   new TransacaoController(),
   new AlunoController(),
+  new AuthController()
 ])
 
 app.run()

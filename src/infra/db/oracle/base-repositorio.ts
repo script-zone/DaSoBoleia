@@ -1,7 +1,7 @@
-import oracledb, { Connection } from 'oracledb';
+import { Connection } from 'oracledb';
 import { connectOracleDB } from '.';
 
-export abstract class BaseRepository<T extends {} = any> {
+export class BaseRepository<T extends {} = any> {
   protected table: string;
   private connection: Connection | undefined;
 
