@@ -1,8 +1,8 @@
 import { GenericController } from "./generic-controller";
-import { BaseRepository } from "../infra/db/oracle/base-repositorio";
+import { TransacaoRepositorio } from "../infra/db/transacao-repositorio";
 
 export class TransacaoController extends GenericController {
-  protected repository = new BaseRepository('transacao');
+  protected repository = new TransacaoRepositorio();
   public path = '/transacao'
 
   constructor() {

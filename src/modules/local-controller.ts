@@ -1,8 +1,8 @@
 import { GenericController } from "./generic-controller";
-import { BaseRepository } from "../infra/db/oracle/base-repositorio";
+import { LocalRepositorio } from "../infra/db/local-repositorio";
 
 export class LocalController extends GenericController {
-  protected repository = new BaseRepository('local');
+  protected repository = new LocalRepositorio();
   public path = '/local'
 
   constructor() {
