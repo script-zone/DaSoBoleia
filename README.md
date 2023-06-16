@@ -60,6 +60,7 @@ Dá Só Boleia é um projeto Mobile desenvolvido como parte das disciplinas de A
 - [Nicasio Silva](https://github.com/Nicasiomarques)
 - [Fridson Firmino](https://github.com/FridsonFirmino)
 - [Benvindo Alves](https://github.com/AlvesBenvindo)
+- [Joilson Capemba](https://github.com/JoilsonCapemba)
 
 ## Contato
 
