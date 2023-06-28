@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+
 import { NotFoundError, UnauthorizedError } from "../../middlewares/global-error-handler";
 import { repositoryFake } from "../../infra/db/local/local-database";
 

@@ -27,7 +27,8 @@ export class AuthController {
     const user = request.body;
     const hashedPassword = await this._encrypterHash(user.senha);
     const createdUser = await this._dbAddAccount({ ...user, senha: hashedPassword });
-    return response.status(201).json(createdUser);
+    const token = this._createTokenCreator({ id: user.codigo });
+    return response.status(201).json({ ...createdUser, token });
   }
 
   private login = async (request: Request, response: Response) => {
