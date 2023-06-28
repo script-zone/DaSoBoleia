@@ -20,8 +20,8 @@ export const dbLocalAddAccount = (newUser: z.infer<typeof UserSchema>) => {
   return sanitizedUser
 }
 
-export const dbLocalGetUserByEmail = (email: string) =>
+export const dbLocalGetUserByEmail = (email: string): z.infer<typeof UserSchema> =>
   repositoryFake('utente').findOne({ email })
 
-export const dbLocalGetUserByIdentification = (n_identificacao: string) =>
+export const dbLocalGetUserByIdentification = (n_identificacao: string): z.infer<typeof UserSchema> =>
   repositoryFake('utente').findOne({ n_identificacao })
