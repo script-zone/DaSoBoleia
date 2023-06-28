@@ -36,9 +36,7 @@ export const UserSchema = z.object({
     .email("Email inválido!")
     .refine(email => !(dbLocalGetUserByEmail(email)), { message: "Email já existe!" }),
   senha: z.string(),
-  data_nascimento:  z.string().refine(
-    isValidBirthDate, 
-    "Data de nascimento inválida. A idade deve estar entre 17 e 90 anos, considerando anos bissextos."),
+  data_nascimento:  z.string().optional(),
 
   categoria: z.enum(["Aluno", "Funcionario", "Docente"]).default("Aluno"),
 
