@@ -32,7 +32,7 @@ export class AuthController {
 
   private login = async (request: Request, response: Response) => {
     const { email, senha } = request.body;
-    const user = await this._dbGetUserByEmail(email);
+    const user = this._dbGetUserByEmail(email);
     if (!user || !(await this._encrypterCompare(senha, user.senha))) {
       throw new BadRequestError("Email ou senha incorretos!");
     }
