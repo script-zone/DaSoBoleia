@@ -39,7 +39,7 @@ export const repositoryFake = <T extends keyof typeof resources>(resource: T) =>
     },
     create: (params: any) => {
       resources[resource].push({
-        id: resources[resource].length ? resources[resource].length + 1 : 1,
+        codigo: resources[resource].length ? resources[resource].length + 1 : 1,
         ...params
       });
       return params;
