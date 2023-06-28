@@ -1,11 +1,11 @@
-import { NextFunction, Request } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import { NotFoundError, UnauthorizedError } from "./global-error-handler";
-import { repositoryFake } from "../infra/db/local-database";
+import { repositoryFake } from "../infra/db/local/local-database";
 
 export const authMiddleware = async (
-  request: Request & { user: { id: number } },
+  request: Request,
   _: Response,
   next: NextFunction
 ) => {
@@ -22,7 +22,6 @@ export const authMiddleware = async (
     const foundUser = repositoryFake('utente').findOne({ codigo: +userPayload.id })
     if (!foundUser) throw new NotFoundError("Usuario não encontrado!")
 
-    request.user.id = foundUser.codigo;
     next();
   } catch (error) {
     const errorMap = {

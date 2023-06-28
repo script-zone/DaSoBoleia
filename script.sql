@@ -1,13 +1,9 @@
-
-
-
-
 CREATE TABLE UTENTE(
     CODIGO NUMBER PRIMARY KEY, 
 	NOME VARCHAR(20), 
 	SOBRENOME VARCHAR(20), 
-    USERNAME VARCHAR(100) UNIQUE NOT NULL,
-    EMAIL VARCHAR(50) NOT NULL UNIQUE,
+  USERNAME VARCHAR(100) UNIQUE NOT NULL,
+  EMAIL VARCHAR(50) NOT NULL UNIQUE,
 	SENHA VARCHAR(10) NOT NULL, 
 	DATA_NASCIMENTO DATE, 
 	CATEGORIA VARCHAR(12) CHECK (categoria IN ('Aluno', 'Funcionario', 'Docente')),
@@ -18,20 +14,20 @@ CREATE TABLE UTENTE(
 );
 
 CREATE TABLE LOCCAL(
-    CODIGO NUMBER PRIMARY KEY, 
+  CODIGO NUMBER PRIMARY KEY, 
 	NOME VARCHAR2(100) NOT NULL UNIQUE, 
 	LATITUDE NUMBER(6,3) UNIQUE,
 	LONGITUDE NUMBER(6,3) UNIQUE
 );
 
 CREATE TABLE ALUNO(
-    CODIGO NUMBER PRIMARY KEY, 
+  CODIGO NUMBER PRIMARY KEY, 
 	CURSO VARCHAR(30), 
 	CONSTRAINT FK_ALUNO_UTENTE FOREIGN KEY (CODIGO) REFERENCES UTENTE(CODIGO)
 );
 
 CREATE TABLE TRANSACAO(
-    CODIGO NUMBER PRIMARY KEY,
+  CODIGO NUMBER PRIMARY KEY,
 	VALOR NUMBER(9,2), 
 	DATA_TRANSACAO DATE, 
 	CODIGO_UTENTE NUMBER,
@@ -92,18 +88,28 @@ CREATE TABLE INSCRICAO(
 
 ----- Criação de pacote /* Um de momento com duas funções*/
 
-CREATE OR REPLACE PACKAGE pck_utente IS
+create or replace PACKAGE pck_utente IS
+
+  type t_condutor is record(
+    nome utente.nome%type,
+    matricula viatura.matricula%type,
+    viatura_marca viatura.marca%type,
+    lotacao_total viatura.lotacao%type
+  );
 
   function pesquisar_saldo(cod_utente utente.codigo%TYPE) return utente.saldo%type;
-  procedure actualizar_saldo(cod_utente utente.codigo%TYPE, v_saldo utente.saldo%type, ret out number);
-  /*procedure ver_condutor(codigo utente.codigo%type);
-  function organizar_boleia
-  (qtd boleia.qtd_passageiro%type, custo custo_boleia%type, data boleia.data_boleia%type, tipo boleia.tipo_boleia%type, origem boleia.local_origem%type, destino boleia.local_destino%type, estado estado%type)
-  return boolean;
-  procedure devolucao(codigo_boleia boleia.codigo%type);*/
-  
-END pck_utente;
+  procedure actualizar_saldo(cod_utente utente.codigo%TYPE, v_saldo utente.saldo%type, ret in out number);
+  FUNCTION ver_condutor(cod_boleia boleia.codigo%type) return SYS_REFCURSOR;
+  function organizar_boleia(
+  cod_utente boleia.codigo_utente%type,custo boleia.custo_boleia%type,
+  dia boleia.tipo_boleia%type, tipo boleia.tipo_boleia%type,
+  origem boleia.local_origem%type, destino boleia.local_destino%type,
+  tipoFrequencia boleia_frequente.tipo_frequencia%type,
+  diaTermino boleia.tipo_boleia%type)
+  return number;
+  /procedure devolucao(codigo_boleia boleia.codigo%type);/
 
+END pck_utente;
 
 create or replace package body pck_utente is
 
@@ -114,8 +120,8 @@ create or replace package body pck_utente is
     select saldo into v_saldo from utente where codigo = cod_utente;
     return v_saldo;
   end;
-  
-  procedure actualizar_saldo(cod_utente utente.codigo%TYPE, v_saldo utente.saldo%type, ret out number) is
+
+  procedure actualizar_saldo(cod_utente utente.codigo%TYPE, v_saldo utente.saldo%type, ret in out number) is
   begin
 
     ret := 0;
@@ -124,16 +130,68 @@ create or replace package body pck_utente is
     where codigo = cod_utente;
     select saldo into ret from utente where codigo = cod_utente;
     COMMIT;
-    
+
     EXCEPTION
       WHEN no_data_found then
         ROLLBACK;
   end;
 
+  FUNCTION ver_condutor(
+    cod_boleia boleia.codigo%type) RETURN SYS_REFCURSOR as
+    condutor SYS_REFCURSOR;
+  begin
+    open condutor for  select u.nome, v.matricula, v.marca, v.lotacao from utente u join viatura v on v.codigo_dono=u.codigo
+      join inscricao i on i.codigo_utente=u.codigo join boleia b on b.codigo=i.codigo_boleia
+      where u.tipo_utente='Condutor' and b.codigo=cod_boleia;
+    --exception
+    --  when no_data_found then
+    --    return null;
+    return condutor;
+  end;
+
+  function organizar_boleia(
+  cod_utente boleia.codigo_utente%type,custo boleia.custo_boleia%type,
+  dia boleia.tipo_boleia%type, tipo boleia.tipo_boleia%type,
+  origem boleia.local_origem%type, destino boleia.local_destino%type,
+  tipoFrequencia boleia_frequente.tipo_frequencia%type,
+  diaTermino boleia.tipo_boleia%type) return number is
+    conf number:= 0;
+    v_saldo utente.saldo%type;
+    cod_boleia boleia.codigo%type;
+  begin
+    select utente.saldo into v_saldo from Utente where utente.codigo=cod_utente and utente.tipo_utente= 'Passageiro';
+    if (v_saldo >= custo) then
+      insert into Boleia(qtd_passageiro,custo_boleia,data_boleia,tipo_boleia,local_origem,local_destino,estado,codigo_utente)
+      values(0, custo, TO_DATE(dia, 'DD-MM-RRRR HH24:MI:SS'), tipo, origem, destino, 'Pendente', cod_utente);
+      if (tipo = 'Frequente') then
+        select max(codigo) into cod_boleia from boleia;
+        insert into Boleia_frequente(codigo,tipo_frequencia,data_termino)values(cod_boleia, tipofrequencia, to_date(diaTermino, 'DD-MM-RRRR'));
+      end if;
+      commit;
+      conf:=1;
+    end if;
+    return conf;
+  end;
+
 end pck_utente;
 
+declare
+  v_condutor pck_utente.t_condutor;
+  confir number;
+begin
+  confir := pck_utente;
+end;
 
------  Criação de sequencias e triggers a usarem estas sequencias OBS: Ainda estão com um pequeno bug . . .
+create or replace trigger inscreve_dono after insert on Boleia
+for each row
+begin
+
+  insert into inscricao (codigo_boleia, codigo_utente, data_inscricao) values(:new.codigo, :new.codigo_utente,SYSDATE);
+  commit;
+
+end;
+
+-----  Criação de sequencias e triggers a uso destas mesmas sequencias OBS: Ainda estão com um pequeno bug . . .
 CREATE SEQUENCE INCREMENT_aluno
     INCREMENT BY 1
     START WITH 1
@@ -146,9 +204,9 @@ begin
     select AUTO_INCREMENT_ALUNO.nextval into :new.codigo from dual;
 end;
 
-CREATE SEQUENCE INCREMENT_boleia
+CREATE SEQUENCE AUTO_INCREMENT_boleia
     INCREMENT BY 1
-    START WITH 1
+    START WITH 2
     NOMAXVALUE
 ;
 
@@ -160,7 +218,7 @@ end;
 
 CREATE SEQUENCE INCREMENT_frequente
     INCREMENT BY 1
-    START WITH 1
+    START WITH 2
     NOMAXVALUE
 ;
 
@@ -233,10 +291,15 @@ end;
 CREATE SEQUENCE INCREMENT_viatura
     INCREMENT BY 1
     START WITH 1
-    NOMAXVALUE;
+    NOMAXVALUE
+;
 
 create or replace trigger increment_viatura before insert on viatura
 for each row
 begin
     select AUTO_INCREMENT_VIATURA.nextval into :new.codigo from dual;
 end;
+
+
+insert into aluno values(1,'Ciências da Computação');
+commit;

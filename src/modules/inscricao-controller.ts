@@ -1,17 +1,14 @@
-import { GenericController } from "./generic-controller";
-import { InscricaoRepositorio } from "../infra/db/inscricao-repositorio";
+import { Router } from "express";
 
-export class InscricaoController extends GenericController {
+export class InscricaoController  {
   public path = '/inscricao'
-  protected repository = new InscricaoRepositorio()
+  protected router = Router()
 
 
   constructor() {
-    super()
     this.initializeRoutes()
   }
 
   public initializeRoutes() {
-   this.initializeGenericRoutes()
   }
 }

@@ -1,5 +1,5 @@
-import OracleDB, { SodaDocument } from "oracledb";
-import { BaseRepository } from "./oracle/base-repositorio";
+import OracleDB from "oracledb";
+import { BaseRepository } from "./base-repositorio";
 
 interface Props {
   codigo: Number;
