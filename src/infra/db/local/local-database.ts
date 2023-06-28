@@ -31,7 +31,7 @@ const resources = {
 export const repositoryFake = <T extends keyof typeof resources>(resource: T) => {
   return {
     findOne: (params: Partial<typeof resources[typeof resource][0]>) => {
-      const foundData = resources[resource].find((item) => {
+      const foundData = (resources[resource] as []).find((item) => {
         return Object.keys(params).every((key) => item[key] === params[key]);
       });
 
