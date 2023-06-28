@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { repositoryFake } from "./local-database";
+import { repositoryFake, resources } from "./local-database";
 import { propDel } from "../../../helpers/prop-del";
 import { UserSchema } from "../../../modules/auth/auth-validators";
 
@@ -10,7 +10,7 @@ export const dbLocalAddAccount = (newUser: z.infer<typeof UserSchema>) => {
       curso: newUser.curso
     })
   }
-  
+  newUser.codigo = resources['utente'].length ? (resources['utente'].length +1) : 1 
   const names = newUser.nome.split(' ')
   newUser.nome = names[0]
   newUser.sobrenome = names[names.length-1]
