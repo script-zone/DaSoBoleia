@@ -1,4 +1,4 @@
-const resources = {
+export const resources = {
   aluno: [{
     id: 1,
     curso: 'Ciência da computação'
@@ -38,10 +38,7 @@ export const repositoryFake = <T extends keyof typeof resources>(resource: T) =>
       return foundData;
     },
     create: (params: any) => {
-      resources[resource].push({
-        codigo: resources[resource].length ? resources[resource].length + 1 : 1,
-        ...params
-      });
+      resources[resource].push(params);
       return params;
     }
   };
