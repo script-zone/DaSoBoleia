@@ -1,5 +1,5 @@
 import { GenericController} from "./generic-controller";
-import { AlunoRepositorio } from "../infra/db/aluno-repositorio";
+import { AlunoRepositorio } from "../infra/db/oracle/aluno-repositorio";
 
 export class AlunoController extends GenericController {
   public path = '/aluno';

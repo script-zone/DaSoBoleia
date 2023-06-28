@@ -1,5 +1,5 @@
+import { ViaturaRepositorio } from "../infra/db/oracle/viatura-repositorio";
 import { GenericController } from "./generic-controller";
-import { ViaturaRepositorio } from "../infra/db/viatura-repositorio";
 
 export class ViaturaController extends GenericController {
   protected repository = new ViaturaRepositorio()

@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { NotFoundError } from "../middlewares/global-error-handler";
 import { GenericController } from "./generic-controller";
-import { UtenteRepositorio } from "../infra/db/utente-repositorio";
+import { UtenteRepositorio } from "../infra/db/oracle/utente-repositorio";
 
 export class UtenteController extends GenericController {
   protected repository = new UtenteRepositorio();
