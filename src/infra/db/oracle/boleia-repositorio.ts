@@ -54,4 +54,57 @@ export class BoleiaRepositorio extends BaseRepository<Props> {
       this.disconnect();
     }
   }
+  
+  public async boleiasCriadas(cod_utente: Number): Promise<any[]>{
+    try{
+      const conexao = await this.connect();
+      const result = await conexao.execute(`
+      Begin
+        :boleias := minhasBoleias(:codigo_utente);
+      End;
+      `,{
+      codigo_utente: { type: OracleDB.NUMBER, val: cod_utente },
+      boleias: { type: OracleDB.CURSOR, dir: OracleDB.BIND_OUT }
+    });
+      const resultSet = Object(result.outBinds).boleias;
+      console.log(resultSet.metaData)
+      let row: {};
+      const cursor: Array<any> = [];
+      while (row = await resultSet.getRow()) {
+        cursor.push(row);
+      }
+      await resultSet.close();
+      return this.checkAndReturn(cursor);
+    }catch(erro){
+      console.error( erro)
+      throw erro
+    }
+  }
+
+  public async boleiasInscritas(cod_utente: Number, cod_boleia: Number): Promise<any[]>{
+    try{
+      const conexao = await this.connect();
+      const result = await conexao.execute(`
+      Begin
+        :boleias := boleiasInscritas(:codigo_utente, :codigo_boleia);
+      End;
+      `,{
+      codigo_boleia: { type: OracleDB.NUMBER, val: cod_boleia },
+      codigo_utente: { type: OracleDB.NUMBER, val: cod_utente },
+      boleias: { type: OracleDB.CURSOR, dir: OracleDB.BIND_OUT }
+    });
+      const resultSet = Object(result.outBinds).boleias;
+      console.log(resultSet.metaData)
+      let row: {};
+      const cursor: Array<any> = [];
+      while (row = await resultSet.getRow()) {
+        cursor.push(row);
+      }
+      await resultSet.close();
+      return this.checkAndReturn(cursor);
+    }catch(erro){
+      console.error( erro)
+      throw erro
+    }
+  }
 }
