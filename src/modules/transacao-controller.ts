@@ -1,16 +1,11 @@
-import { GenericController } from "./generic-controller";
-import { TransacaoRepositorio } from "../infra/db/transacao-repositorio";
-
-export class TransacaoController extends GenericController {
-  protected repository = new TransacaoRepositorio();
+export class TransacaoController{
+  
   public path = '/transacao'
 
   constructor() {
-    super()
     this.initializeRoutes()
   }
 
   public initializeRoutes() {
-    this.initializeGenericRoutes()
   }
 }

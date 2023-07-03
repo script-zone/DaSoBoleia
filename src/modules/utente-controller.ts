@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { NotFoundError } from "../middlewares/global-error-handler";
 import { GenericController } from "./generic-controller";
-import { UtenteRepositorio } from "../infra/db/utente-repositorio";
+import { UtenteRepositorio } from "../infra/db/oracle/utente-repositorio";
 
 export class UtenteController extends GenericController {
   protected repository = new UtenteRepositorio();
@@ -14,7 +14,7 @@ export class UtenteController extends GenericController {
 
   public async getCondutor(request: Request, response: Response){
     const { codigo } = request.params;
-    const record = await new UtenteRepositorio().getCondutor(codigo);
+    const record = await new UtenteRepositorio().getCondutor(Number(codigo));
     if(!record) throw new NotFoundError('Não há ainda condutor nesta boleia');
     return response.status(200).json(record)
   }

@@ -6,11 +6,8 @@ import { App } from './app';
 import { UtenteController } from './modules/utente-controller';
 import { ViaturaController } from './modules/viatura-controller';
 import { BoleiaController } from './modules/boleia-controller'
-import { InscricaoController } from './modules/inscricao-controller';
-import { LocalController } from './modules/local-controller';
-import { TransacaoController } from './modules/transacao-controller';
 import { AlunoController } from './modules/aluno-controller';
-import { AuthController } from './modules/auth-controller';
+import { AuthController } from './modules/auth/auth-controller';
 
 dotenv.config()
 cleanEnv(process.env, {
@@ -25,9 +22,6 @@ const app = new App([
   new ViaturaController(),
   new UtenteController(),
   new BoleiaController(),
-  new InscricaoController(),
-  new LocalController(),
-  new TransacaoController(),
   new AlunoController(),
   new AuthController()
 ])

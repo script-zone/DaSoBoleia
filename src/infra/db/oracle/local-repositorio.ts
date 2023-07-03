@@ -1,4 +1,4 @@
-import { BaseRepository } from "./oracle/base-repositorio";
+import { BaseRepository } from "./base-repositorio";
 
 interface Props {
   codigo: Number;

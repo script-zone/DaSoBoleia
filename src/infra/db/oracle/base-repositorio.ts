@@ -1,6 +1,5 @@
-import { Connection } from 'oracledb';
+import OracleDB, { Connection } from 'oracledb';
 import { connectOracleDB } from '.';
-
 export class BaseRepository<T extends {} = any> {
   protected table: string;
   private connection: Connection | undefined;
@@ -27,16 +26,12 @@ export class BaseRepository<T extends {} = any> {
   public async execute(sql: string,bindParams:{}={}) {
 
     try{
-      console.log(888)
       this.connection = await this.connect()
       const resultado = await this.connection.execute(sql,bindParams);
-      console.log(bindParams)
-      console.log(resultado?.outBinds)
-    this.connection.commit()
+      this.connection.commit()
       this.connection = this.disconnect()
       return resultado;
     }catch(err){
-      console.error(err)
       throw err
     }
   }
@@ -49,7 +44,6 @@ export class BaseRepository<T extends {} = any> {
       this.connection = this.disconnect()
       return resultado;
     }catch(err){
-      console.error(err)
       throw err
     }
   }
@@ -113,7 +107,7 @@ export class BaseRepository<T extends {} = any> {
     }
   }*/
 
-  public async findOne(filters: Record<string, any>): Promise<T | null> {
+  public async findOne(filters: Record<string, any>): Promise<any> {
     try {
       const filterConditions = Object.entries(filters).map(([key, _value]) => `${key} = :${key}`);
       const filterParams = Object.fromEntries(Object.entries(filters).map(([key, value]) => [key, value]));
@@ -123,10 +117,10 @@ export class BaseRepository<T extends {} = any> {
         FROM ${this.table}
         ${filterConditions.length ? 'WHERE ' + filterConditions.join(' AND ') : ''}
       `;
-      const result = await this.execute(query, filterParams)
+      const result = await this.execute(query, filterParams);
       return this.checkAndReturn(result)?.[0] || null;
     } catch (error) {
-      console.error('Erro ao buscar registro por ID:', error);
+      console.error('Erro ao buscar registro por codigo:', error);
       throw error;
     }
   }
